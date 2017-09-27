@@ -1,0 +1,29 @@
+body {
+  font-family: Arial;
+}
+
+h2 {
+  text-align: center;
+}
+
+rect {
+  -webkit-transition: fill .2s ease-out;
+  transition: fill .2s ease-out;
+}
+
+rect:hover {
+  fill: #0e5;
+}
+
+.blinking {
+  -webkit-animation: blink .5s infinite;
+          animation: blink .5s infinite;
+}
+
+@-webkit-keyframes blink {  
+  50% { opacity: .5; }
+}
+
+@keyframes blink {  
+  50% { opacity: .5; }
+}
