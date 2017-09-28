@@ -1,8 +1,10 @@
 body {
-  font-family: Arial;
+  font-family: 'Asap Condensed', sans-serif;
+  font-size: 18px;
+  background: #f5fff5;
 }
 
-h2 {
+h1 {
   text-align: center;
 }
 
@@ -15,15 +17,30 @@ rect:hover {
   fill: #0e5;
 }
 
+.axis {
+  font-weight: bold;
+}
+.axis-x text {
+  -webkit-transform: rotate(-40deg);
+          transform: rotate(-40deg);
+  text-anchor: end;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  line-height: 90%;
+}
+
 .blinking {
   -webkit-animation: blink .5s infinite;
           animation: blink .5s infinite;
 }
 
-@-webkit-keyframes blink {  
+@-webkit-keyframes blink {
   50% { opacity: .5; }
 }
 
-@keyframes blink {  
+@keyframes blink {
   50% { opacity: .5; }
 }

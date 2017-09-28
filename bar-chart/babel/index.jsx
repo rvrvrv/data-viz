@@ -1,7 +1,26 @@
+const Tooltip = ({ x, y, text }) => (
+  <svg>
+    <filter id="f1">
+      <feGaussianBlur stdDeviation="5" />
+    </filter>
+    <text
+      x={x}
+      y={y}
+      style={{ stroke: '#f5fff5', strokeWidth: 20, filter: 'url(#f1)' }}
+    >
+      {text}
+    </text>
+    <text x={x} y={y} style={{ fill: '#050' }}>
+      {text}
+    </text>
+  </svg>
+);
+
 class Bars extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hovering: false, x: 0, y: 0 };
+    // Set color based on GDP value
     this.colorScale = d3
       .scaleLinear()
       .domain([0, this.props.maxValue])
@@ -10,11 +29,11 @@ class Bars extends React.Component {
   }
 
   showTooltip = (e) => {
-    const formattedDate = d3.timeFormat('%b %Y')(d3.timeParse('%Y-%m-%d')(e.target.dataset.date));
+    // Update state with hovered stats
     this.setState({
-      hovering: `${formattedDate}:$${e.target.dataset.gdp} Bil.`,
-      x: e.target.getAttribute('x') * 0.75,
-      y: e.target.getAttribute('y') * 0.95,
+      hovering: `${e.target.dataset.date}: $${e.target.dataset.gdp} bn`,
+      x: Math.min(window.innerWidth - 200, e.target.getAttribute('x') * 0.75),
+      y: Math.max(40, e.target.getAttribute('y') * 0.9),
     });
   };
 
@@ -31,7 +50,7 @@ class Bars extends React.Component {
         x={xScale(d[0])}
         y={yScale(d[1])}
         height={height - margins.bottom - scales.yScale(d[1])}
-        width={xScale.bandwidth()}
+        width={xScale.bandwidth() + 0.7}
         fill={this.colorScale(d[1])}
         data-date={d[0]}
         data-gdp={d[1]}
@@ -41,21 +60,125 @@ class Bars extends React.Component {
     ));
     return (
       <svg>
-        { /* Tooltips */ }
-        {this.state.hovering &&
-        <text
-          x={this.state.x}
-          y={this.state.y}
-        >
-          {this.state.hovering}
-        </text>
-        }
-        { /* Bars */ }
+        {/* Bars */}
         <g>{bars}</g>
+        {/* Tooltip */}
+        {this.state.hovering && (
+          <Tooltip
+            x={this.state.x}
+            y={this.state.y}
+            text={this.state.hovering}
+          />
+        )}
       </svg>
     );
   }
 }
+
+class Axis extends React.Component {
+  componentDidMount() {
+    this.renderAxis();
+  }
+
+  componentDidUpdate() {
+    this.renderAxis();
+  }
+
+  renderAxis() {
+    if (this.props.axis === 'x') {
+      const xAxis = d3
+        .axisBottom()
+        .scale(this.props.scale)
+        .tickSize(this.props.tickSize)
+        .tickSizeOuter([0])
+        .tickValues([
+          'Jan 1950',
+          'Jan 1960',
+          'Jan 1970',
+          'Jan 1980',
+          'Jan 1990',
+          'Jan 2000',
+          'Jan 2010',
+        ]);
+      d3.select(this.axisElement).call(xAxis);
+    } else {
+      const yAxis = d3
+        .axisLeft()
+        .scale(this.props.scale)
+        .tickSize(-this.props.tickSize)
+        .tickValues([9000]);
+      d3.select(this.axisElement).call(yAxis);
+    }
+  }
+
+  render() {
+    return (
+      <g
+        className={`axis axis-${this.props.axis}`}
+        ref={(e) => {
+          this.axisElement = e;
+        }}
+        transform={this.props.translate}
+      />
+    );
+  }
+}
+
+const Axes = ({ scales, margins, height, width }) => {
+  const xProps = {
+    axis: 'x',
+    scale: scales.xScale,
+    translate: `translate(0, ${height - margins.bottom})`,
+    tickSize: -5,
+  };
+  const yProps = {
+    axis: 'y',
+    scale: scales.yScale,
+    translate: `translate(${margins.left}, 0)`,
+    tickSize: width - margins.left - margins.right,
+  };
+
+  return (
+    <g>
+      <Axis {...xProps} />
+      <Axis {...yProps} />
+    </g>
+  );
+};
+
+const Chart = ({ height, width, data }) => {
+  const margins = { top: 0, right: 10, bottom: 40, left: 40 };
+  const maxValue = d3.max(data.map(d => d[1]));
+  // scaleBand (Date values)
+  const xScale = d3
+    .scaleBand()
+    .domain(data.map(d => d[0]))
+    .range([margins.left, width - margins.right]);
+
+  // scaleLinear (GDP values)
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, maxValue])
+    .range([height - margins.bottom, margins.top]);
+
+  return (
+    <svg width={width} height={height}>
+      <Bars
+        scales={{ xScale, yScale }}
+        margins={margins}
+        data={data}
+        maxValue={maxValue}
+        height={height}
+      />
+      <Axes
+        scales={{ xScale, yScale }}
+        margins={margins}
+        height={height}
+        width={width}
+      />
+    </svg>
+  );
+};
 
 class ChartWrapper extends React.Component {
   constructor() {
@@ -93,34 +216,6 @@ class ChartWrapper extends React.Component {
   }
 }
 
-const Chart = ({ height, width, data }) => {
-  const margins = { top: 0, right: 10, bottom: 50, left: 40 };
-  const maxValue = d3.max(data.map(d => d[1]));
-  // scaleBand (Date values)
-  const xScale = d3
-    .scaleBand()
-    .domain(data.map(d => d[0]))
-    .range([margins.left, width - margins.right]);
-
-  // scaleLinear (GDP values)
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, maxValue])
-    .range([height - margins.bottom, margins.top]);
-
-  return (
-    <svg width={width} height={height}>
-      <Bars
-        scales={{ xScale, yScale }}
-        margins={margins}
-        data={data}
-        maxValue={maxValue}
-        height={height}
-      />
-    </svg>
-  );
-};
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -136,7 +231,12 @@ class App extends React.Component {
       'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json';
     try {
       const response = await (await fetch(dataURL)).json();
-      this.setState({ data: response.data, status: 'loaded' });
+      // Format dates for axes and tooltips
+      const formatted = response.data.map(d => [
+        d3.timeFormat('%b %Y')(d3.timeParse('%Y-%m-%d')(d[0])),
+        d[1],
+      ]);
+      this.setState({ data: formatted, status: 'loaded' });
     } catch (e) {
       console.error(e);
       this.setState({ status: 'error' });
@@ -145,8 +245,8 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="chart">
-        <h2 className="title">US Quarterly GDP</h2>
+      <div>
+        <h1>US Quarterly GDP</h1>
         {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
         {this.state.status === 'error' && (
           <h2>An error has occurred. Please try again later.</h2>
@@ -154,6 +254,12 @@ class App extends React.Component {
         {this.state.status === 'loaded' && (
           <ChartWrapper data={this.state.data} />
         )}
+        <footer>
+          For more information, visit the{' '}
+          <a href="https://bea.gov/methodologies/index.htm" target="_blank">
+            U.S. Department of Commerce Bureau of Economic Analysis (BEA)
+          </a>
+        </footer>
       </div>
     );
   }
