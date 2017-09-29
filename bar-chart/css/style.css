@@ -1,7 +1,7 @@
 body {
   font-family: 'Asap Condensed', sans-serif;
   font-size: 18px;
-  background: #f5fff5;
+  background: #f0fff0;
 }
 
 h1 {
@@ -17,13 +17,18 @@ rect:hover {
   fill: #0e5;
 }
 
-.axis {
+text {
   font-weight: bold;
 }
+
 .axis-x text {
   -webkit-transform: rotate(-40deg);
           transform: rotate(-40deg);
   text-anchor: end;
+}
+
+line {
+  stroke-dasharray: 3,9;
 }
 
 footer {

@@ -31,7 +31,7 @@ class Bars extends React.Component {
   showTooltip = (e) => {
     // Update state with hovered stats
     this.setState({
-      hovering: `${e.target.dataset.date}: $${e.target.dataset.gdp} bn`,
+      hovering: `${e.target.dataset.date}: $${d3.format(',')(e.target.dataset.gdp)} bn`,
       x: Math.min(window.innerWidth - 200, e.target.getAttribute('x') * 0.75),
       y: Math.max(40, e.target.getAttribute('y') * 0.9),
     });
@@ -50,7 +50,7 @@ class Bars extends React.Component {
         x={xScale(d[0])}
         y={yScale(d[1])}
         height={height - margins.bottom - scales.yScale(d[1])}
-        width={xScale.bandwidth() + 0.7}
+        width={xScale.bandwidth() + 1}
         fill={this.colorScale(d[1])}
         data-date={d[0]}
         data-gdp={d[1]}
@@ -90,7 +90,6 @@ class Axis extends React.Component {
         .axisBottom()
         .scale(this.props.scale)
         .tickSize(this.props.tickSize)
-        .tickSizeOuter([0])
         .tickValues([
           'Jan 1950',
           'Jan 1960',
@@ -105,8 +104,9 @@ class Axis extends React.Component {
       const yAxis = d3
         .axisLeft()
         .scale(this.props.scale)
-        .tickSize(-this.props.tickSize)
-        .tickValues([9000]);
+        .tickSize(this.props.tickSize)
+        .tickValues([6000, 12000])
+        .tickFormat(d => `$${d / 1000}k bn`);
       d3.select(this.axisElement).call(yAxis);
     }
   }
@@ -129,13 +129,13 @@ const Axes = ({ scales, margins, height, width }) => {
     axis: 'x',
     scale: scales.xScale,
     translate: `translate(0, ${height - margins.bottom})`,
-    tickSize: -5,
+    tickSize: 0,
   };
   const yProps = {
     axis: 'y',
     scale: scales.yScale,
     translate: `translate(${margins.left}, 0)`,
-    tickSize: width - margins.left - margins.right,
+    tickSize: -(width - margins.left - margins.right),
   };
 
   return (
@@ -147,34 +147,34 @@ const Axes = ({ scales, margins, height, width }) => {
 };
 
 const Chart = ({ height, width, data }) => {
-  const margins = { top: 0, right: 10, bottom: 40, left: 40 };
+  const margins = { top: 3, right: 10, bottom: 40, left: 40 };
   const maxValue = d3.max(data.map(d => d[1]));
   // scaleBand (Date values)
   const xScale = d3
     .scaleBand()
     .domain(data.map(d => d[0]))
-    .range([margins.left, width - margins.right]);
+    .range([margins.left + 1, width - margins.right - 1]);
 
   // scaleLinear (GDP values)
   const yScale = d3
     .scaleLinear()
-    .domain([0, maxValue])
+    .domain([0, maxValue + 10])
     .range([height - margins.bottom, margins.top]);
 
   return (
     <svg width={width} height={height}>
+      <Axes
+        scales={{ xScale, yScale }}
+        margins={margins}
+        height={height}
+        width={width}
+      />
       <Bars
         scales={{ xScale, yScale }}
         margins={margins}
         data={data}
         maxValue={maxValue}
         height={height}
-      />
-      <Axes
-        scales={{ xScale, yScale }}
-        margins={margins}
-        height={height}
-        width={width}
       />
     </svg>
   );
@@ -184,7 +184,7 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: window.innerHeight - 200,
+      height: window.innerHeight - 175,
       width: window.innerWidth - 20,
     };
   }
@@ -200,7 +200,7 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: window.innerHeight - 200,
+      height: window.innerHeight - 175,
       width: window.innerWidth - 20,
     });
   };
