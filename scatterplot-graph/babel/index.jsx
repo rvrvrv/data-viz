@@ -1,12 +1,22 @@
 const Tooltip = ({ x, y, info }) => {
-  const { time, place, name, year, nat, doping, url } = info;
-  const stylePosition = {
-    left: x,
-    top: y,
+  const { time, place, name, year, nat, doping } = info;
+  const styles = {
+    left: x + (place < 15 ? 0 : -250),
+    top: y + (place < 15 ? 150 : 0),
+    background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)'
   };
   return (
-    <div className="tooltip" style={stylePosition}>
-      <span>Time: {time}</span>
+    <div className="tooltip" style={styles}>
+      <p>
+        <span className="tooltip-title">{place} - {name} - {nat}</span>
+        <br />Time: {time}
+        <br />Year: {year}
+      </p>
+      {doping &&
+        <p><span className="blinking">Doping Allegations:</span>
+          <br />{doping}
+          </p>
+      }
     </div>
   );
 };
@@ -16,11 +26,11 @@ const Circles = (props) => {
   const { xScale, yScale } = scales;
   const circles = data.map(d => (
     <circle
+      className={d.Doping ? 'doping' : 'clean'}
       key={d.Name}
       cx={xScale(d3.timeParse('%M:%S')(d.Time))}
       cy={yScale(d.Place)}
-      r={5}
-      fill={d.Doping ? '#e00' : '#00d'}
+      r={7}
       data-time={d.Time}
       data-place={d.Place}
       data-name={d.Name}
@@ -28,6 +38,7 @@ const Circles = (props) => {
       data-nat={d.Nationality}
       data-doping={d.Doping}
       data-url={d.URL}
+      onClick={props.onClick}
       onMouseEnter={props.onHover}
       onMouseLeave={props.onExitHover}
     />
@@ -105,8 +116,14 @@ class Chart extends React.Component {
     };
   }
 
+  openDopingLink = (e) => {
+    // When user clicks a doping cyclist, open the appropriate link
+    e.target.dataset.url
+      ? window.open(e.target.dataset.url)
+      : e.preventDefault();
+  };
+
   showTooltip = (e) => {
-    console.log(e.target);
     // Update state with hovered stats
     this.setState({
       hovering: e.target.dataset,
@@ -125,7 +142,6 @@ class Chart extends React.Component {
     const extTime = d3.extent(data, d => d3.timeParse('%M:%S')(d.Time));
     const timeMin = extTime[0];
     const timeMax = extTime[1];
-    console.log(timeMin, timeMax);
 
     // scaleTime (Time values)
     const xScale = d3
@@ -153,6 +169,7 @@ class Chart extends React.Component {
             margins={margins}
             data={data}
             height={height}
+            onClick={this.openDopingLink}
             onHover={this.showTooltip}
             onExitHover={this.hideTooltip}
           />

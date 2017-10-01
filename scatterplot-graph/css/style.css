@@ -1,19 +1,10 @@
 body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   background: #fafaff;
 }
 
 h1 {
   text-align: center;
-}
-
-rect {
-  -webkit-transition: fill .2s ease-out;
-  transition: fill .2s ease-out;
-}
-
-rect:hover {
-  fill: #0e5;
 }
 
 text {
@@ -27,7 +18,39 @@ text {
 }
 
 line {
-  stroke-dasharray: 1,3;
+  stroke-dasharray: 1, 3;
+}
+
+circle.doping {
+  fill: #e00;
+  cursor: pointer;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+circle.doping:hover {
+  stroke: #900;
+  stroke-width: 3px;
+}
+circle.clean {
+  fill: #00d;
+}
+
+.tooltip {
+  position: fixed;
+  background: rgba(240, 210, 255, 0.9);
+  border: 3px solid #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+  max-width: 200px;
+  -webkit-animation: fadeIn 0.5s;
+          animation: fadeIn 0.5s;
+}
+
+.tooltip-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  text-shadow: 0 0 10px #fff;
 }
 
 footer {
@@ -36,19 +59,37 @@ footer {
   line-height: 90%;
 }
 
-.tooltip {
-  position: fixed;
-  
-}
 .blinking {
-  -webkit-animation: blink .5s infinite;
-          animation: blink .5s infinite;
+  -webkit-animation: blink 1s infinite;
+          animation: blink 1s infinite;
 }
 
-@-webkit-keyframes blink {  
-  50% { opacity: .5; }
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-@keyframes blink {  
-  50% { opacity: .5; }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes blink {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.6;
+  }
 }
