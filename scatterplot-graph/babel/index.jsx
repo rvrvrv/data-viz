@@ -1,7 +1,7 @@
 const Tooltip = ({ x, y, info }) => {
   const { time, place, name, year, nat, doping } = info;
   const styles = {
-    left: x + (place < 15 ? 0 : -250),
+    left: x + (place < 15 ? 0 : -170),
     top: y + (place < 15 ? 150 : 0),
     background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)'
   };
@@ -27,8 +27,8 @@ const Circles = (props) => {
   const circles = data.map(d => (
     <circle
       className={d.Doping ? 'doping' : 'clean'}
-      key={d.Name}
-      cx={xScale(d3.timeParse('%M:%S')(d.Time))}
+      key={`cyclist-${d.Place}`}
+      cx={xScale(d.Seconds)}
       cy={yScale(d.Place)}
       r={7}
       data-time={d.Time}
@@ -60,7 +60,7 @@ class Axis extends React.Component {
       const xAxis = d3
         .axisBottom()
         .scale(this.props.scale)
-        .ticks(10)
+        .tickValues([30, 60, 90, 120, 150, 180])
         .tickSize(this.props.tickSize);
       d3.select(this.axisElement).call(xAxis);
     } else {
@@ -139,14 +139,11 @@ class Chart extends React.Component {
   render() {
     const { height, width, data } = this.props;
     const margins = { top: 10, right: 10, bottom: 40, left: 40 };
-    const extTime = d3.extent(data, d => d3.timeParse('%M:%S')(d.Time));
-    const timeMin = extTime[0];
-    const timeMax = extTime[1];
 
     // scaleTime (Time values)
     const xScale = d3
-      .scaleTime(extTime[0], extTime[1])
-      .domain([timeMin, timeMax])
+      .scaleLinear()
+      .domain([0,180])
       .range([margins.left, width - margins.right]);
 
     // scaleLinear (Rank values)
@@ -237,6 +234,8 @@ class App extends React.Component {
       'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
     try {
       const response = await (await fetch(dataURL)).json();
+      //Recalculate 'Seconds' property to equal seconds behind 1st place
+      response.forEach((d,i) => d.Seconds = d.Seconds - 2210);
       this.setState({ data: response, status: 'loaded' });
     } catch (e) {
       console.error(e);
