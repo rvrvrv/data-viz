@@ -12,8 +12,8 @@ text {
 }
 
 .axis-x text {
-  -webkit-transform: rotate(-40deg);
-          transform: rotate(-40deg);
+  -webkit-transform: translateY(5px) rotate(-40deg);
+          transform: translateY(5px) rotate(-40deg);
   text-anchor: end;
 }
 
@@ -24,14 +24,15 @@ line {
 circle.doping {
   fill: #e00;
   cursor: pointer;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+  -webkit-transition: stroke-width .3s;
+  transition: stroke-width .3s;
 }
 
 circle.doping:hover {
   stroke: #900;
   stroke-width: 3px;
 }
+
 circle.clean {
   fill: #00d;
 }
@@ -39,7 +40,7 @@ circle.clean {
 .tooltip {
   position: fixed;
   background: rgba(240, 210, 255, 0.9);
-  border: 3px solid #fff;
+  border: 8px solid #fff;
   border-radius: 5px;
   padding: 0 10px;
   max-width: 200px;
