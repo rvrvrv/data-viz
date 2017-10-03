@@ -101,7 +101,9 @@ const Axes = ({ scales, margins, height, width }) => {
   };
   return (
     <g>
+      <text x={width / 2} y={height - (margins.top / 4)} style={{ textAnchor: 'middle' }}>Seconds Behind 1st Place</text>
       <Axis {...xProps} />
+      <text x={-((height / 2) - margins.top)} y={margins.left / 2} style={{ transform: 'rotate(-90deg)' }}>Place</text>
       <Axis {...yProps} />
     </g>
   );
@@ -188,7 +190,7 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: window.innerHeight - 175,
+      height: window.innerHeight - 120,
       width: window.innerWidth - 20,
     };
   }
@@ -204,7 +206,7 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: window.innerHeight - 175,
+      height: window.innerHeight - 120,
       width: window.innerWidth - 20,
     });
   };
@@ -236,7 +238,7 @@ class App extends React.Component {
     try {
       const response = await (await fetch(dataURL)).json();
       // Recalculate 'Seconds' property to equal seconds behind 1st place
-      response.forEach((d, i) => d.Seconds -= 2210);
+      response.forEach(d => d.Seconds -= 2210);
       this.setState({ data: response, status: 'loaded' });
     } catch (e) {
       console.error(e);
@@ -247,7 +249,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Cyclist Data</h1>
+        <h2>Fastest Cyclists at Alpe d'Huez</h2>
         {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
         {this.state.status === 'error' && (
           <h2>An error has occurred. Please try again later.</h2>
