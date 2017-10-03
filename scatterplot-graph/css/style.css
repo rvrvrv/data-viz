@@ -65,6 +65,18 @@ footer {
           animation: blink 1s infinite;
 }
 
+@-webkit-keyframes blink {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.6;
+  }
+}
+
 @-webkit-keyframes fadeIn {
   from {
     opacity: 0;
@@ -83,14 +95,32 @@ footer {
   }
 }
 
-@-webkit-keyframes blink {
-  50% {
-    opacity: 0.6;
+@-webkit-keyframes circleEntrance {
+  0% {
+    opacity: 0;
+    r: 16;
+  }
+  90% {
+    opacity: .5;
+    r: 3;
+  }
+  100% {
+    opacity: 1;
+    r: 6;
   }
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0.6;
+@keyframes circleEntrance {
+  0% {
+    opacity: 0;
+    r: 16;
+  }
+  90% {
+    opacity: .5;
+    r: 3;
+  }
+  100% {
+    opacity: 1;
+    r: 6;
   }
 }

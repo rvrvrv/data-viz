@@ -3,7 +3,7 @@ const Tooltip = ({ x, y, info }) => {
   const styles = {
     left: x + (place < 15 ? 0 : -170),
     top: y + (place < 15 ? 150 : 0),
-    background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)'
+    background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)',
   };
   return (
     <div className="tooltip" style={styles}>
@@ -15,7 +15,7 @@ const Tooltip = ({ x, y, info }) => {
       {doping &&
         <p><span className="blinking">Doping Allegations:</span>
           <br />{doping}
-          </p>
+        </p>
       }
     </div>
   );
@@ -27,10 +27,11 @@ const Circles = (props) => {
   const circles = data.map(d => (
     <circle
       className={d.Doping ? 'doping' : 'clean'}
+      style={{ animation: `circleEntrance ${(Math.random() * 2) + 1}s` }}
       key={`cyclist-${d.Place}`}
       cx={xScale(d.Seconds)}
       cy={yScale(d.Place)}
-      r={7}
+      r={6}
       data-time={d.Time}
       data-place={d.Place}
       data-name={d.Name}
@@ -116,12 +117,12 @@ class Chart extends React.Component {
     };
   }
 
-  openDopingLink = (e) => {
+  openDopingLink = e =>
     // When user clicks a doping cyclist, open the appropriate link
-    e.target.dataset.url
+    (e.target.dataset.url
       ? window.open(e.target.dataset.url)
-      : e.preventDefault();
-  };
+      : e.preventDefault())
+  ;
 
   showTooltip = (e) => {
     // Update state with hovered stats
@@ -143,7 +144,7 @@ class Chart extends React.Component {
     // scaleTime (Time values)
     const xScale = d3
       .scaleLinear()
-      .domain([0,180])
+      .domain([0, 180])
       .range([margins.left, width - margins.right]);
 
     // scaleLinear (Rank values)
@@ -234,8 +235,8 @@ class App extends React.Component {
       'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
     try {
       const response = await (await fetch(dataURL)).json();
-      //Recalculate 'Seconds' property to equal seconds behind 1st place
-      response.forEach((d,i) => d.Seconds = d.Seconds - 2210);
+      // Recalculate 'Seconds' property to equal seconds behind 1st place
+      response.forEach((d, i) => d.Seconds -= 2210);
       this.setState({ data: response, status: 'loaded' });
     } catch (e) {
       console.error(e);
