@@ -1,0 +1,68 @@
+body {
+  background: #fffafa;
+  font-size: 20px;
+}
+
+body, text {
+  font-family: "Arimo", sans-serif;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 0;
+}
+
+text {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.axis-x text {
+  transform: translateY(5px) rotate(-40deg);
+  text-anchor: end;
+}
+
+.axis-y text {
+  transform: translateY(3.2vh);
+}
+
+.tooltip {
+  position: fixed;
+  border: 8px solid #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+  transition: background .3s;
+  -webkit-animation: fadeIn 0.5s;
+  animation: fadeIn 0.5s;
+}
+
+.tooltip-title {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+footer {
+  position: fixed;
+  bottom: 5px;
+  font-size: .6em;
+  line-height: 95%;
+}
+
+.blinking {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
