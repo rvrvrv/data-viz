@@ -1,9 +1,12 @@
 const Tooltip = ({ x, y, info }) => {
   const { year, month, variance, fill } = info;
+  // Convert hex color (fill) to rgba for tooltip background
+  const rgbaFill = d3.color(fill);
+  rgbaFill.opacity = 0.8;
   const styles = {
-    left: x + (year < 1890 ? 0 : -170),
+    left: x,
     top: y + 200,
-    background: `rgba(${fill.slice(4, fill.length - 1)}, .7)`,
+    background: rgbaFill,
   };
   return (
     <div className="tooltip" style={styles}>
@@ -23,10 +26,9 @@ const Cells = (props) => {
   const { xScale, yScale } = scales;
   // Set color based on temperature
   const colorScale = d3
-    .scaleLinear()
-    .domain([-6.976, 5.228])
-    .range(['#ddf', '#f00'])
-    .interpolate(d3.interpolateLab);
+    .scaleQuantile()
+    .domain([-6.976, 5.5])
+    .range(['#aef', '#8fe', '#dfb', '#ffb', '#fd8', '#fc8', '#f98', '#fa8', '#f42', '#c10']);
 
   const cells = data.map(d => (
     <rect
@@ -34,7 +36,7 @@ const Cells = (props) => {
       x={xScale(d.year)}
       y={yScale(d.month)}
       fill={colorScale(d.variance)}
-      height={height}
+      height={height / 12}
       width={width / 262}
       data-year={d3.timeFormat('%Y')(d.year)}
       data-month={d3.timeFormat('%b')(d.month)}
@@ -69,8 +71,7 @@ class Axis extends React.Component {
       const yAxis = d3
         .axisLeft()
         .scale(this.props.scale)
-        .tickSize(-this.props.width)
-        .tickSizeOuter(0)
+        .tickSize(0)
         .tickFormat(d3.timeFormat('%B'));
       d3.select(this.axisElement).call(yAxis);
     }
@@ -98,8 +99,7 @@ const Axes = ({ scales, margins, height, width }) => {
   const yProps = {
     axis: 'y',
     scale: scales.yScale,
-    width,
-    translate: `translate(${margins.left}, 0)`,
+    translate: `translate(${margins.left}, ${height / 22})`,
   };
   return (
     <g>
@@ -150,18 +150,17 @@ class Chart extends React.Component {
 
     return (
       <div>
-        <svg width={width} height={height}>
+        <svg width={width} height={height + margins.bottom}>
           <Axes
             scales={{ xScale, yScale }}
             margins={margins}
-            height={height}
+            height={height + margins.bottom}
             width={width}
           />
           <Cells
             scales={{ xScale, yScale }}
-            margins={margins}
             data={data}
-            height={(height - margins.top - margins.bottom) / 12}
+            height={height}
             width={width}
             onHover={this.showTooltip}
             onExitHover={this.hideTooltip}

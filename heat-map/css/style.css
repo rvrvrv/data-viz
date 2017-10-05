@@ -1,6 +1,5 @@
 body {
   background: #fffafa;
-  font-size: 20px;
 }
 
 body, text {
@@ -18,12 +17,12 @@ text {
 }
 
 .axis-x text {
-  transform: translateY(5px) rotate(-40deg);
+  transform: rotate(-40deg);
   text-anchor: end;
 }
 
-.axis-y text {
-  transform: translateY(3.2vh);
+path {
+  display: none;
 }
 
 .tooltip {
@@ -31,7 +30,7 @@ text {
   border: 8px solid #fff;
   border-radius: 5px;
   padding: 0 10px;
-  transition: background .3s;
+  transition: background 1s;
   -webkit-animation: fadeIn 0.5s;
   animation: fadeIn 0.5s;
 }
@@ -44,7 +43,6 @@ text {
 footer {
   position: fixed;
   bottom: 5px;
-  font-size: .6em;
   line-height: 95%;
 }
 
