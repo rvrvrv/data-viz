@@ -25,8 +25,11 @@ path {
   display: none;
 }
 
-.tooltip {
+.tooltip, .legend, .footer {
   position: fixed;
+}
+
+.tooltip {
   border: 8px solid #fff;
   border-radius: 5px;
   padding: 0 10px;
@@ -40,11 +43,18 @@ path {
   font-weight: bold;
 }
 
-footer {
-  position: fixed;
-  bottom: 5px;
-  line-height: 95%;
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
 }
+
+.footer {
+  bottom: 5px;
+  width: 100%;
+  text-align: center;
+}
+
 
 .blinking {
   animation: blink 1s infinite;

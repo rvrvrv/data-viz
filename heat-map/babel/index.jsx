@@ -1,11 +1,45 @@
+const Legend = ({ colorScale, height, width, margins }) => {
+  const legendData = [-6.5, -5, -3.5, -2.25, -0.75, 0.5, 1.75, 3, 4.25, 5.5];
+  const legendCells = legendData.map((d, i) => (
+    <rect
+      key={`diff-${d}`}
+      x={(width / 10) * i}
+      y={0}
+      fill={colorScale(d)}
+      height={height}
+      width={width / 10}
+    />
+  ));
+  return (
+    <div>
+      <div className="legend" style={{ left: (window.innerWidth - width) / 2 }}>
+        <svg height={height} width={width}>
+          <g>{legendCells}</g>
+        </svg>
+        <br />
+        <div className="legend-labels">
+          <span>-6.5</span>
+          <span>
+          Temp{margins.left === 40 ? '. Diff' : 'erature Differential'}
+          </span>
+          <span>5.5</span>
+        </div>
+      </div>
+      {window.innerWidth > 450 &&
+      <div className="footer">Temp{window.innerWidth < 900 ? '. diff relative to avg. abs. temp. 1/1951 - 12/1980' : 'erature differentials are relative to the average absolute temperature between Jan 1951 and Dec 1980 (8.66°C +/- 0.07).'}</div>
+      }
+    </div>
+  );
+};
+
 const Tooltip = ({ x, y, info }) => {
   const { year, month, variance, fill } = info;
-  // Convert hex color (fill) to rgba for tooltip background
+  // Convert hex fill color to rgba for tooltip background
   const rgbaFill = d3.color(fill);
   rgbaFill.opacity = 0.8;
   const styles = {
     left: x,
-    top: y + 200,
+    top: y + (y < window.innerHeight / 5 ? 150 : 0),
     background: rgbaFill,
   };
   return (
@@ -21,15 +55,8 @@ const Tooltip = ({ x, y, info }) => {
   );
 };
 
-const Cells = (props) => {
-  const { scales, data, height, width } = props;
-  const { xScale, yScale } = scales;
-  // Set color based on temperature
-  const colorScale = d3
-    .scaleQuantile()
-    .domain([-6.976, 5.5])
-    .range(['#aef', '#8fe', '#dfb', '#ffb', '#fd8', '#fc8', '#f98', '#fa8', '#f42', '#c10']);
-
+const Cells = ({ scales, data, height, width, onHover, onExitHover }) => {
+  const { xScale, yScale, colorScale } = scales;
   const cells = data.map(d => (
     <rect
       key={`${d.month}-${d.year}`}
@@ -42,8 +69,8 @@ const Cells = (props) => {
       data-month={d3.timeFormat('%b')(d.month)}
       data-variance={d.variance}
       data-fill={colorScale(d.variance)}
-      onMouseEnter={props.onHover}
-      onMouseLeave={props.onExitHover}
+      onMouseEnter={onHover}
+      onMouseLeave={onExitHover}
     />
   ));
   return <g>{cells}</g>;
@@ -72,7 +99,7 @@ class Axis extends React.Component {
         .axisLeft()
         .scale(this.props.scale)
         .tickSize(0)
-        .tickFormat(d3.timeFormat('%B'));
+        .tickFormat(d3.timeFormat(this.props.margins.left === 40 ? '%b' : '%B'));
       d3.select(this.axisElement).call(yAxis);
     }
   }
@@ -90,14 +117,16 @@ class Axis extends React.Component {
   }
 }
 
-const Axes = ({ scales, margins, height, width }) => {
+const Axes = ({ scales, margins, height }) => {
   const xProps = {
     axis: 'x',
+    margins,
     scale: scales.xScale,
     translate: `translate(0, ${height - margins.bottom})`,
   };
   const yProps = {
     axis: 'y',
+    margins,
     scale: scales.yScale,
     translate: `translate(${margins.left}, ${height / 22})`,
   };
@@ -134,7 +163,7 @@ class Chart extends React.Component {
 
   render() {
     const { height, width, data } = this.props;
-    const margins = { top: 10, right: 15, bottom: 50, left: 80 };
+    const margins = { top: 10, right: 5, bottom: 50, left: width < 521 ? 40 : 80 };
 
     // scaleTime (Year values)
     const xScale = d3
@@ -148,6 +177,23 @@ class Chart extends React.Component {
       .domain([new Date(1900, 11, 1), new Date(1900, 0, 1)])
       .range([height - margins.bottom, margins.top]);
 
+    // scaleQuantile (color is based on temperature differential)
+    const colorScale = d3
+      .scaleQuantile()
+      .domain([-6.5, 5.5])
+      .range([
+        '#4df',
+        '#aef',
+        '#dfb',
+        '#ffb',
+        '#fd8',
+        '#fc8',
+        '#f98',
+        '#fa8',
+        '#f42',
+        '#c10',
+      ]);
+
     return (
       <div>
         <svg width={width} height={height + margins.bottom}>
@@ -158,7 +204,7 @@ class Chart extends React.Component {
             width={width}
           />
           <Cells
-            scales={{ xScale, yScale }}
+            scales={{ xScale, yScale, colorScale }}
             data={data}
             height={height}
             width={width}
@@ -173,6 +219,12 @@ class Chart extends React.Component {
             info={this.state.hovering}
           />
         )}
+        <Legend
+          colorScale={colorScale}
+          margins={margins}
+          height={height / 12}
+          width={width / 2}
+        />
       </div>
     );
   }
@@ -182,8 +234,8 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: window.innerHeight - 270,
-      width: window.innerWidth - 50,
+      height: Math.max(320, window.innerHeight - 260),
+      width: window.innerWidth - 30,
     };
   }
 
@@ -198,8 +250,8 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: window.innerHeight - 270,
-      width: window.innerWidth - 50,
+      height: Math.max(320, window.innerHeight - 260),
+      width: window.innerWidth - 30,
     });
   };
 
@@ -225,7 +277,8 @@ class App extends React.Component {
 
   // Fetch cyclist data via async/await
   async componentDidMount() {
-    const dataURL = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json';
+    const dataURL =
+      'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json';
     try {
       const response = await (await fetch(dataURL)).json();
       // Parse time from all years and months
@@ -246,16 +299,8 @@ class App extends React.Component {
         <h1>Global Surface Temperature</h1>
         <h2>1753 - 2015</h2>
         {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
-        {this.state.status === 'error' && (
-          <h3>An error has occurred. Please try again later.</h3>
-        )}
-        {this.state.status === 'loaded' && (
-          <ChartWrapper data={this.state.data} />
-        )}
-        <footer>
-          Temperature differentials are relative to the average absolute
-          temperature between Jan 1951 and Dec 1980 (8.66°C +/- 0.07).
-        </footer>
+        {this.state.status === 'error' && <h3>An error has occurred. Please try again later.</h3>}
+        {this.state.status === 'loaded' && <ChartWrapper data={this.state.data} />}
       </div>
     );
   }
