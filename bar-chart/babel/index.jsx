@@ -188,7 +188,7 @@ class ChartWrapper extends React.Component {
     super();
     this.state = {
       height: Math.max(200, window.innerHeight - 175),
-      width: Math.max(100, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20),
     };
   }
 
@@ -204,7 +204,7 @@ class ChartWrapper extends React.Component {
   resizeChart = () => {
     this.setState({
       height: Math.max(200, window.innerHeight - 175),
-      width: Math.max(100, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20),
     });
   };
 
