@@ -24,7 +24,7 @@ class Bars extends React.Component {
     this.colorScale = d3
       .scaleLinear()
       .domain([0, this.props.maxValue])
-      .range(['#ac7', '#5a1'])
+      .range(['#ab7', '#5a1'])
       .interpolate(d3.interpolateLab);
   }
 
@@ -32,7 +32,7 @@ class Bars extends React.Component {
     // Update state with hovered stats
     this.setState({
       hovering: `${e.target.dataset.date}: $${d3.format(',')(e.target.dataset.gdp)} bn`,
-      x: Math.min(window.innerWidth - 200, e.target.getAttribute('x') * 0.75),
+      x: Math.min(window.innerWidth - 250, e.target.getAttribute('x') * 0.75),
       y: Math.max(40, e.target.getAttribute('y') * 0.9),
     });
   };
@@ -46,6 +46,7 @@ class Bars extends React.Component {
     const { xScale, yScale } = scales;
     const bars = data.map(d => (
       <rect
+        style={{ animation: `barEntrance ${Math.random() + 0.5}s` }}
         key={d[0]}
         x={xScale(d[0])}
         y={yScale(d[1])}
@@ -90,6 +91,7 @@ class Axis extends React.Component {
         .axisBottom()
         .scale(this.props.scale)
         .tickSize(this.props.tickSize)
+        .tickSizeOuter(0)
         .tickValues([
           'Jan 1950',
           'Jan 1960',
@@ -98,7 +100,8 @@ class Axis extends React.Component {
           'Jan 1990',
           'Jan 2000',
           'Jan 2010',
-        ]);
+        ])
+        .tickFormat(d => d.slice(4));
       d3.select(this.axisElement).call(xAxis);
     } else {
       const yAxis = d3
@@ -129,7 +132,7 @@ const Axes = ({ scales, margins, height, width }) => {
     axis: 'x',
     scale: scales.xScale,
     translate: `translate(0, ${height - margins.bottom})`,
-    tickSize: 0,
+    tickSize: 5,
   };
   const yProps = {
     axis: 'y',
@@ -147,7 +150,7 @@ const Axes = ({ scales, margins, height, width }) => {
 };
 
 const Chart = ({ height, width, data }) => {
-  const margins = { top: 3, right: 10, bottom: 40, left: 40 };
+  const margins = { top: 0, right: 10, bottom: 40, left: 45 };
   const maxValue = d3.max(data.map(d => d[1]));
   // scaleBand (Date values)
   const xScale = d3
@@ -184,8 +187,8 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: window.innerHeight - 175,
-      width: window.innerWidth - 20,
+      height: Math.max(200, window.innerHeight - 175),
+      width: Math.max(100, window.innerWidth - 20),
     };
   }
 
@@ -200,8 +203,8 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: window.innerHeight - 175,
-      width: window.innerWidth - 20,
+      height: Math.max(200, window.innerHeight - 175),
+      width: Math.max(100, window.innerWidth - 20),
     });
   };
 
