@@ -1,11 +1,14 @@
 body {
+  background: #f5fff5;
+}
+
+body, text {
   font-family: 'Asap Condensed', sans-serif;
-  font-size: 18px;
-  background: #f0fff0;
 }
 
 h1 {
   text-align: center;
+  white-space: nowrap;
 }
 
 rect {
@@ -19,6 +22,7 @@ rect:hover {
 
 text {
   font-weight: bold;
+  font-size: 1.4em;
 }
 
 .axis-x text {
@@ -27,14 +31,14 @@ text {
   text-anchor: end;
 }
 
-line {
+.axis-y line {
   stroke-dasharray: 3,9;
 }
 
 footer {
   position: fixed;
-  bottom: 0;
-  line-height: 90%;
+  bottom: 5px;
+  line-height: 95%;
 }
 
 .blinking {
@@ -48,4 +52,40 @@ footer {
 
 @keyframes blink {
   50% { opacity: .5; }
+}
+
+@-webkit-keyframes barEntrance {
+  0% {
+    opacity: 0;
+    -webkit-transform: scaleY(0.2);
+            transform: scaleY(0.2);
+  }
+  80% {
+    opacity: .5;
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95)
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+}
+
+@keyframes barEntrance {
+  0% {
+    opacity: 0;
+    -webkit-transform: scaleY(0.2);
+            transform: scaleY(0.2);
+  }
+  80% {
+    opacity: .5;
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95)
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
 }
