@@ -1,4 +1,4 @@
-const Legend = ({ colorScale, height, width, margins }) => {
+const Legend = ({ colorScale, height, width }) => {
   const legendData = [-6.5, -5, -3.5, -2.25, -0.75, 0.5, 1.75, 3, 4.25, 5.5];
   const legendCells = legendData.map((d, i) => (
     <rect
@@ -20,13 +20,13 @@ const Legend = ({ colorScale, height, width, margins }) => {
         <div className="legend-labels">
           <span>-6.5</span>
           <span>
-          Temp{margins.left === 40 ? '. Diff' : 'erature Differential'}
+          Temp{width < 225 ? '. Diff.' : 'erature Differential'}
           </span>
           <span>5.5</span>
         </div>
       </div>
-      {window.innerWidth > 450 &&
-      <div className="footer">Temp{window.innerWidth < 900 ? '. diff relative to avg. abs. temp. 1/1951 - 12/1980' : 'erature differentials are relative to the average absolute temperature between Jan 1951 and Dec 1980 (8.66°C +/- 0.07).'}</div>
+      {width > 200 &&
+      <div className="footer">Temp{width < 450 ? '. diff. relative to avg. abs. temp. 1/1951 - 12/1980' : 'erature differentials are relative to the average absolute temperature between Jan 1951 and Dec 1980 (8.66°C +/- 0.07)'}</div>
       }
     </div>
   );
@@ -122,7 +122,7 @@ const Axes = ({ scales, margins, height }) => {
     axis: 'x',
     margins,
     scale: scales.xScale,
-    translate: `translate(0, ${height - margins.bottom})`,
+    translate: `translate(0, ${scales.yScale(d3.timeParse('%m')(13)) + 1})`,
   };
   const yProps = {
     axis: 'y',
@@ -200,7 +200,7 @@ class Chart extends React.Component {
           <Axes
             scales={{ xScale, yScale }}
             margins={margins}
-            height={height + margins.bottom}
+            height={height}
             width={width}
           />
           <Cells
@@ -234,8 +234,8 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: Math.max(320, window.innerHeight - 260),
-      width: window.innerWidth - 30,
+      height: Math.max(300, window.innerHeight - 300),
+      width: Math.max(250, window.innerWidth - 30),
     };
   }
 
@@ -250,8 +250,8 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: Math.max(320, window.innerHeight - 260),
-      width: window.innerWidth - 30,
+      height: Math.max(300, window.innerHeight - 300),
+      width: Math.max(250, window.innerWidth - 30),
     });
   };
 
