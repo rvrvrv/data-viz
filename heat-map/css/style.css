@@ -1,5 +1,10 @@
 body {
   background: #fffafa;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: default;
 }
 
 body, text {
@@ -8,7 +13,7 @@ body, text {
 
 h1, h2 {
   text-align: center;
-  margin: 0;
+  margin: 1px;
 }
 
 text {
@@ -17,7 +22,8 @@ text {
 }
 
 .axis-x text {
-  transform: rotate(-40deg);
+  -webkit-transform: rotate(-40deg);
+          transform: rotate(-40deg);
   text-anchor: end;
 }
 
@@ -33,6 +39,7 @@ path {
   border: 8px solid #fff;
   border-radius: 5px;
   padding: 0 10px;
+  -webkit-transition: background 1s;
   transition: background 1s;
   -webkit-animation: fadeIn 0.5s;
   animation: fadeIn 0.5s;
@@ -44,25 +51,27 @@ path {
 }
 
 .legend-labels {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   font-weight: 600;
 }
 
 .footer {
-  bottom: 5px;
+  bottom: 1px;
   width: 100%;
   text-align: center;
 }
 
-
-.blinking {
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0.6;
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
