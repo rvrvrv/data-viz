@@ -2,7 +2,7 @@ const Legend = ({ colorScale, height, width }) => {
   const legendData = [-6.5, -5, -3.5, -2.25, -0.75, 0.5, 1.75, 3, 4.25, 5.5];
   const legendCells = legendData.map((d, i) => (
     <rect
-      key={`diff-${d}`}
+      key={`legend-${d}`}
       x={(width / 10) * i}
       y={0}
       fill={colorScale(d)}
@@ -25,7 +25,7 @@ const Legend = ({ colorScale, height, width }) => {
           <span>5.5</span>
         </div>
       </div>
-      {width > 200 &&
+      {(width > 200 && window.innerHeight > 500) &&
       <div className="footer">Temp{width < 450 ? '. diff. relative to avg. abs. temp. 1/1951 - 12/1980' : 'erature differentials are relative to the average absolute temperature between Jan 1951 and Dec 1980 (8.66°C +/- 0.07)'}</div>
       }
     </div>
@@ -188,9 +188,9 @@ class Chart extends React.Component {
         '#ffb',
         '#fd8',
         '#fc8',
-        '#f98',
         '#fa8',
-        '#f42',
+        '#f98',
+        '#f44',
         '#c10',
       ]);
 
