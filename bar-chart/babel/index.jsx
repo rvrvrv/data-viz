@@ -210,11 +210,21 @@ class ChartWrapper extends React.Component {
 
   render() {
     return (
-      <Chart
-        height={this.state.height}
-        width={this.state.width}
-        data={this.props.data}
-      />
+      <div>
+        <Chart
+          height={this.state.height}
+          width={this.state.width}
+          data={this.props.data}
+        />
+        {window.innerHeight > 300 &&
+        <footer>
+          For more information, visit the{' '}
+          <a href="https://bea.gov/methodologies/index.htm" target="_blank">
+            U.S. Department of Commerce Bureau of Economic Analysis (BEA)
+          </a>
+        </footer>
+        }
+      </div>
     );
   }
 }
