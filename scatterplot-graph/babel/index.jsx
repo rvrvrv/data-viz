@@ -225,24 +225,14 @@ class ChartWrapper extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      status: null,
-    };
-  }
-
-  // Fetch cyclist data via async/await
-  async componentDidMount() {
-    const dataURL =
-      'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
     try {
-      const response = await (await fetch(dataURL)).json();
+      // Load cyclist data from imported js file
+      const data = scatterplotData;
       // Recalculate 'Seconds' property to equal seconds behind 1st place
-      response.forEach(d => d.Seconds -= 2210);
-      this.setState({ data: response, status: 'loaded' });
+      data.forEach(d => d.Seconds -= 2210);
+      this.state = { data, status: 'loaded' };
     } catch (e) {
-      console.error(e);
-      this.setState({ status: 'error' });
+      this.state = { data: null, status: 'error' };
     }
   }
 
@@ -250,12 +240,11 @@ class App extends React.Component {
     return (
       <div>
         <h2>Fastest Cyclists at Alpe d'Huez</h2>
-        {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
-        {this.state.status === 'error' && (
-          <h2>An error has occurred. Please try again later.</h2>
-        )}
         {this.state.status === 'loaded' && (
           <ChartWrapper data={this.state.data} />
+        )}
+        {this.state.status === 'error' && (
+          <h2>An error has occurred. Please try again later.</h2>
         )}
         <footer>
           For more information, visit{' '}
