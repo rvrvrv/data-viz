@@ -63,7 +63,7 @@ const Cells = ({ scales, data, height, width, onHover, onExitHover }) => {
       x={xScale(d.year)}
       y={yScale(d.month)}
       fill={colorScale(d.variance)}
-      height={height / 12}
+      height={(height / 12) + 2}
       width={width / 262}
       data-year={d3.timeFormat('%Y')(d.year)}
       data-month={d3.timeFormat('%b')(d.month)}
@@ -122,7 +122,7 @@ const Axes = ({ scales, margins, height }) => {
     axis: 'x',
     margins,
     scale: scales.xScale,
-    translate: `translate(0, ${scales.yScale(d3.timeParse('%m')(13)) + 1})`,
+    translate: `translate(0, ${scales.yScale(d3.timeParse('%m')(13)) + 5})`,
   };
   const yProps = {
     axis: 'y',
@@ -222,7 +222,7 @@ class Chart extends React.Component {
         <Legend
           colorScale={colorScale}
           margins={margins}
-          height={height / 12}
+          height={Math.max(40, height / 13)}
           width={width / 2}
         />
       </div>
@@ -234,7 +234,7 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: Math.max(300, window.innerHeight - 300),
+      height: Math.max(250, window.innerHeight - 250),
       width: Math.max(250, window.innerWidth - 30),
     };
   }
@@ -250,7 +250,7 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: Math.max(300, window.innerHeight - 300),
+      height: Math.max(250, window.innerHeight - 250),
       width: Math.max(250, window.innerWidth - 30),
     });
   };
@@ -269,27 +269,17 @@ class ChartWrapper extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      status: null,
-    };
-  }
-
-  // Fetch cyclist data via async/await
-  async componentDidMount() {
-    const dataURL =
-      'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json';
     try {
-      const response = await (await fetch(dataURL)).json();
+      // Load data from imported js file
+      const data = heatMapData;
       // Parse time from all years and months
-      response.monthlyVariance.forEach((e) => {
+      heatMapData.monthlyVariance.forEach((e) => {
         e.year = d3.timeParse('%Y')(e.year);
         e.month = d3.timeParse('%m')(e.month);
       });
-      this.setState({ data: response.monthlyVariance, status: 'loaded' });
+      this.state = { data: heatMapData.monthlyVariance, status: 'loaded' };
     } catch (e) {
-      console.error(e);
-      this.setState({ status: 'error' });
+      this.state = { data: null, status: 'error' };
     }
   }
 
@@ -298,9 +288,12 @@ class App extends React.Component {
       <div>
         <h1>Global Surface Temperature</h1>
         <h2>1753 - 2015</h2>
-        {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
-        {this.state.status === 'error' && <h3>An error has occurred. Please try again later.</h3>}
-        {this.state.status === 'loaded' && <ChartWrapper data={this.state.data} />}
+        {this.state.status === 'loaded' && (
+          <ChartWrapper data={this.state.data} />
+        )}
+        {this.state.status === 'error' && (
+          <h3>An error has occurred. Please try again later.</h3>
+        )}
       </div>
     );
   }
