@@ -222,27 +222,15 @@ class ChartWrapper extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      status: null,
-    };
-  }
-
-  // Fetch GDP data via async/await
-  async componentDidMount() {
-    const dataURL =
-      'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json';
     try {
-      const response = await (await fetch(dataURL)).json();
-      // Format dates for axes and tooltips
-      const formatted = response.data.map(d => [
+      // Load GDP data from imported js file
+      const data = barChartData.data.map(d => [
         d3.timeFormat('%b %Y')(d3.timeParse('%Y-%m-%d')(d[0])),
         d[1],
       ]);
-      this.setState({ data: formatted, status: 'loaded' });
+      this.state = { data };
     } catch (e) {
-      console.error(e);
-      this.setState({ status: 'error' });
+      this.state = { data: null };
     }
   }
 
@@ -250,19 +238,10 @@ class App extends React.Component {
     return (
       <div>
         <h1>US Quarterly GDP</h1>
-        {!this.state.status && <h2 className="blinking">Retrieving data...</h2>}
-        {this.state.status === 'error' && (
-          <h2>An error has occurred. Please try again later.</h2>
-        )}
-        {this.state.status === 'loaded' && (
-          <ChartWrapper data={this.state.data} />
-        )}
-        <footer>
-          For more information, visit the{' '}
-          <a href="https://bea.gov/methodologies/index.htm" target="_blank">
-            U.S. Department of Commerce Bureau of Economic Analysis (BEA)
-          </a>
-        </footer>
+        {this.state.data
+          ? <ChartWrapper data={this.state.data} />
+          : <h2>An error has occurred. Please try again later.</h2>
+        }
       </div>
     );
   }
