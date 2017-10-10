@@ -230,9 +230,9 @@ class App extends React.Component {
       const data = scatterplotData;
       // Recalculate 'Seconds' property to equal seconds behind 1st place
       data.forEach(d => d.Seconds -= 2210);
-      this.state = { data, status: 'loaded' };
+      this.state = { data };
     } catch (e) {
-      this.state = { data: null, status: 'error' };
+      this.state = { data: null };
     }
   }
 
@@ -240,12 +240,10 @@ class App extends React.Component {
     return (
       <div>
         <h2>Fastest Cyclists at Alpe d'Huez</h2>
-        {this.state.status === 'loaded' && (
-          <ChartWrapper data={this.state.data} />
-        )}
-        {this.state.status === 'error' && (
-          <h2>An error has occurred. Please try again later.</h2>
-        )}
+        {this.state.data
+          ? <ChartWrapper data={this.state.data} />
+          : <h2>An error has occurred. Please try again later.</h2>
+        }
         <footer>
           For more information, visit{' '}
           <a href="https://www.dopeology.org/" target="_blank">
