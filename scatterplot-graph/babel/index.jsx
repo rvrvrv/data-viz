@@ -190,8 +190,8 @@ class ChartWrapper extends React.Component {
   constructor() {
     super();
     this.state = {
-      height: window.innerHeight - 120,
-      width: window.innerWidth - 20,
+      height: Math.max(200, window.innerHeight - 120),
+      width: Math.max(200, window.innerWidth - 20),
     };
   }
 
@@ -206,18 +206,28 @@ class ChartWrapper extends React.Component {
   // Resize chart when window is resized
   resizeChart = () => {
     this.setState({
-      height: window.innerHeight - 120,
-      width: window.innerWidth - 20,
+      height: Math.max(200, window.innerHeight - 120),
+      width: Math.max(200, window.innerWidth - 20),
     });
   };
 
   render() {
     return (
-      <Chart
-        height={this.state.height}
-        width={this.state.width}
-        data={this.props.data}
-      />
+      <div>
+        <Chart
+          height={this.state.height}
+          width={this.state.width}
+          data={this.props.data}
+        />
+        {window.innerHeight > 260 &&
+        <footer>
+          For more information, visit{' '}
+          <a href="https://www.dopeology.org/" target="_blank">
+            Dopeology.org
+          </a>
+        </footer>
+        }
+      </div>
     );
   }
 }
@@ -244,12 +254,6 @@ class App extends React.Component {
           ? <ChartWrapper data={this.state.data} />
           : <h2>An error has occurred. Please try again later.</h2>
         }
-        <footer>
-          For more information, visit{' '}
-          <a href="https://www.dopeology.org/" target="_blank">
-            Dopeology.org
-          </a>
-        </footer>
       </div>
     );
   }
