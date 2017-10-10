@@ -271,15 +271,15 @@ class App extends React.Component {
     super(props);
     try {
       // Load data from imported js file
-      const data = heatMapData;
+      const data = heatMapData.monthlyVariance;
       // Parse time from all years and months
-      heatMapData.monthlyVariance.forEach((e) => {
-        e.year = d3.timeParse('%Y')(e.year);
-        e.month = d3.timeParse('%m')(e.month);
+      data.forEach((d) => {
+        d.year = d3.timeParse('%Y')(d.year);
+        d.month = d3.timeParse('%m')(d.month);
       });
-      this.state = { data: heatMapData.monthlyVariance, status: 'loaded' };
+      this.state = { data };
     } catch (e) {
-      this.state = { data: null, status: 'error' };
+      this.state = { data: null };
     }
   }
 
@@ -288,12 +288,10 @@ class App extends React.Component {
       <div>
         <h1>Global Surface Temperature</h1>
         <h2>1753 - 2015</h2>
-        {this.state.status === 'loaded' && (
-          <ChartWrapper data={this.state.data} />
-        )}
-        {this.state.status === 'error' && (
-          <h3>An error has occurred. Please try again later.</h3>
-        )}
+        {this.state.data
+          ? <ChartWrapper data={this.state.data} />
+          : <h3>An error has occurred. Please try again later.</h3>
+        }
       </div>
     );
   }
