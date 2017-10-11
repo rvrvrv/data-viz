@@ -1,0 +1,65 @@
+body {
+  background: #fffeee;
+  user-select: none;
+  cursor: default;
+}
+
+body, text {
+  font-family: "Nobile", sans-serif;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 5px;
+}
+
+svg {
+  display: block;
+  margin: auto;
+}
+
+line {
+  stroke: rgba(0,0,0,0.25);
+  stroke-width: 2px;
+}
+
+.flag {
+  position: absolute;
+}
+
+.tooltip, .footer {
+  position: fixed;
+}
+
+.tooltip {
+  border: 8px solid #fff;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  animation: fadeIn 0.5s;
+}
+
+.footer {
+  bottom: 1px;
+  width: 100%;
+  text-align: center;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
