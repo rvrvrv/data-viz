@@ -5,21 +5,45 @@ class Graph extends React.Component {
       width: Math.max(200, window.innerWidth - 50),
       height: Math.max(200, window.innerHeight - 100),
     };
+    this.simulation = null;
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.resizeGraph);
     this.generateGraph();
+    // Update state (width and height) when window is resized
+    window.addEventListener('resize', this.resizeGraph);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeGraph);
   }
 
+  // Resize and recenter graph
+  resizeGraph = () => {
+    this.setState({
+      width: Math.max(200, window.innerWidth - 50),
+      height: Math.max(200, window.innerHeight - 100),
+    }, () => {
+      this.centerSim();
+      this.simulation.alpha(0.3).restart();
+    });
+  };
+
+  // Center simulation within window
+  centerSim = ({ width, height } = this.state) => {
+    // forceX and forceY strength based on size props
+    const xStrength = (width < 600) ? 0.25 : (width < 1000) ? 0.1 : 0.05;
+    const yStrength = (height < 400) ? 0.5 : (height < 850) ? 0.1 : 0.05;
+    this.simulation
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('x', d3.forceX(width / 2).strength(xStrength))
+      .force('y', d3.forceY(height / 2).strength(yStrength));
+  };
+
   // Generate graph
-  generateGraph = (resize) => {
-    const { width, height } = this.state;
+  generateGraph = () => {
     const data = this.props.data;
+    const { width, height } = this.state;
 
     // SVG based on size props
     const svg = d3
@@ -33,28 +57,27 @@ class Graph extends React.Component {
       .append('div')
       .attr('class', 'tooltip');
 
-    // Function to display tooltips
+    // Tooltip functions
     const showTooltip = (country, x, y) => {
       tooltip.transition()
         .duration(250)
         .style('opacity', 0.9);
       tooltip.html(country)
-        .style('left', `${x - 42}px`)
+        .style('left', `${x - 16}px`)
         .style('top', `${y - 16}px`);
     };
-
-    // forceX and forceY strength based on size props
-    const xStrength = width < 500 ? 0.4 : 0.1;
-    const yStrength = height < 700 ? 0.2 : 0.06;
+    const hideTooltip = () => {
+      tooltip.transition()
+        .duration(400)
+        .style('opacity', 0);
+    };
 
     // Set up force-directed simulation
-    const simulation = d3
+    this.simulation = d3
       .forceSimulation()
       .force('link', d3.forceLink())
-      .force('charge', d3.forceManyBody().strength(-55))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('x', d3.forceX(width / 2).strength(xStrength))
-      .force('y', d3.forceY(height / 2).strength(yStrength));
+      .force('charge', d3.forceManyBody().strength(-50));
+    this.centerSim();
 
     // Create links (lines between flags)
     const link = svg
@@ -75,10 +98,11 @@ class Graph extends React.Component {
       .attr('src', 'https://rvrvrv.github.io/img/blank.gif')
       .attr('class', d => `flag flag-${d.code}`)
       .attr('alt', d => d.country)
+      .style('transform', `scale(${(width < 500 || height < 500) ? 0.35 : 0.5})`)
       // Drag functionality
       .call(d3.drag()
         .on('start', (d) => {
-          if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+          if (!d3.event.active) this.simulation.alphaTarget(0.5).restart();
           d.fx = d.x;
           d.fy = d.y;
         })
@@ -93,7 +117,7 @@ class Graph extends React.Component {
           }
         })
         .on('end', (d) => {
-          if (!d3.event.active) simulation.alphaTarget(0);
+          if (!d3.event.active) this.simulation.alphaTarget(0);
           d.fx = null;
           d.fy = null;
         }),
@@ -104,13 +128,12 @@ class Graph extends React.Component {
         showTooltip(d.country, d.x, d.y);
       })
       .on('mouseout', (d) => {
-        tooltip.transition()
-          .duration(400)
-          .style('opacity', 0);
+        hideTooltip();
       })
       // Ensure tooltips appear on mobile devices
       .on('click', (d) => {
         showTooltip(d.country, d.x, d.y);
+        setTimeout(hideTooltip, 1000);
       });
 
     // Set position of links and nodes
@@ -126,16 +149,8 @@ class Graph extends React.Component {
     };
 
     // Draw nodes and links
-    simulation.nodes(data.nodes).on('tick', ticked).alpha(0.3);
-    simulation.force('link').links(data.links);
-  };
-
-  // Resize graph when window is resized
-  resizeGraph = () => {
-    this.setState({
-      width: Math.max(200, window.innerWidth - 50),
-      height: Math.max(200, window.innerHeight - 100),
-    });
+    this.simulation.nodes(data.nodes).on('tick', ticked).alpha(0.3);
+    this.simulation.force('link').links(data.links);
   };
 
   render() {
@@ -152,9 +167,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     try {
-      // Load data from imported js file
-      const data = forceDirectedData;
-      this.state = { data };
+      // Store data from imported js file
+      this.state = { data: forceDirectedData };
     } catch (e) {
       this.state = { data: null };
     }
