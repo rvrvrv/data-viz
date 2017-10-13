@@ -32,10 +32,11 @@ class Graph extends React.Component {
   // Center simulation within window
   centerSim = ({ width, height } = this.state) => {
     // forceX and forceY strength based on size props
-    const xStrength = (width < 600) ? 0.25 : (width < 1000) ? 0.1 : 0.05;
-    const yStrength = (height < 400) ? 0.5 : (height < 850) ? 0.1 : 0.05;
+    const xStrength = (width < 500) ? 0.25 : (width < 1000) ? 0.09 : 0.05;
+    const yStrength = (height < 450) ? 0.35 : (height < 800) ? 0.12 : 0.05;
     this.simulation
       .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('charge', d3.forceManyBody())
       .force('x', d3.forceX(width / 2).strength(xStrength))
       .force('y', d3.forceY(height / 2).strength(yStrength));
   };
@@ -75,8 +76,7 @@ class Graph extends React.Component {
     // Set up force-directed simulation
     this.simulation = d3
       .forceSimulation()
-      .force('link', d3.forceLink())
-      .force('charge', d3.forceManyBody().strength(-50));
+      .force('link', d3.forceLink());
     this.centerSim();
 
     // Create links (lines between flags)
@@ -98,7 +98,7 @@ class Graph extends React.Component {
       .attr('src', 'https://rvrvrv.github.io/img/blank.gif')
       .attr('class', d => `flag flag-${d.code}`)
       .attr('alt', d => d.country)
-      .style('transform', `scale(${(width < 500 || height < 500) ? 0.35 : 0.5})`)
+      .style('transform', `scale(${(width < 600 || height < 600) ? 0.3 : 0.5})`)
       // Drag functionality
       .call(d3.drag()
         .on('start', (d) => {
