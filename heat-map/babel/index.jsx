@@ -1,4 +1,4 @@
-const Legend = ({ colorScale, height, width }) => {
+const Legend = ({ colorScale, height, width, margins }) => {
   const legendData = [-6.5, -5, -3.5, -2.25, -0.75, 0.5, 1.75, 3, 4.25, 5.5];
   const legendCells = legendData.map((d, i) => (
     <rect
@@ -12,7 +12,13 @@ const Legend = ({ colorScale, height, width }) => {
   ));
   return (
     <div>
-      <div className="legend" style={{ left: (window.innerWidth - width) / 2 }}>
+      <div
+        className="legend"
+        style={{
+          left: (window.innerWidth - width) / 2,
+          marginTop: (window.innerHeight > 450) ? margins.top : -(margins.top * 3),
+        }}
+      >
         <svg height={height} width={width}>
           <g>{legendCells}</g>
         </svg>
@@ -193,7 +199,6 @@ class Chart extends React.Component {
         '#f44',
         '#c10',
       ]);
-
     return (
       <div>
         <svg width={width} height={height + margins.bottom}>
@@ -221,9 +226,9 @@ class Chart extends React.Component {
         )}
         <Legend
           colorScale={colorScale}
-          margins={margins}
           height={Math.max(40, height / 13)}
           width={width / 2}
+          margins={margins}
         />
       </div>
     );
