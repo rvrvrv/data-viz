@@ -16,7 +16,7 @@ const Legend = ({ colorScale, height, width, margins }) => {
         className="legend"
         style={{
           left: (window.innerWidth - width) / 2,
-          marginTop: (window.innerHeight > 450) ? margins.top : -(margins.top * 3),
+          marginTop: (window.innerHeight > 450) ? margins.top : -(margins.top * 3)
         }}
       >
         <svg height={height} width={width}>
@@ -46,7 +46,7 @@ const Tooltip = ({ x, y, info }) => {
   const styles = {
     left: x,
     top: y + (y < window.innerHeight / 5 ? 150 : 0),
-    background: rgbaFill,
+    background: rgbaFill
   };
   return (
     <div className="tooltip" style={styles}>
@@ -128,13 +128,13 @@ const Axes = ({ scales, margins, height }) => {
     axis: 'x',
     margins,
     scale: scales.xScale,
-    translate: `translate(0, ${scales.yScale(d3.timeParse('%m')(13)) + 5})`,
+    translate: `translate(0, ${scales.yScale(d3.timeParse('%m')(13)) + 5})`
   };
   const yProps = {
     axis: 'y',
     margins,
     scale: scales.yScale,
-    translate: `translate(${margins.left}, ${height / 22})`,
+    translate: `translate(${margins.left}, ${height / 22})`
   };
   return (
     <g>
@@ -150,7 +150,7 @@ class Chart extends React.Component {
     this.state = {
       hovering: null,
       x: 0,
-      y: 0,
+      y: 0
     };
   }
 
@@ -159,7 +159,7 @@ class Chart extends React.Component {
     this.setState({
       hovering: e.target.dataset,
       x: Math.min(window.innerWidth - 150, e.target.getAttribute('x') * 0.9),
-      y: Math.max(50, e.target.getAttribute('y') * 0.9),
+      y: Math.max(50, e.target.getAttribute('y') * 0.9)
     });
   };
 
@@ -197,7 +197,7 @@ class Chart extends React.Component {
         '#fa8',
         '#f98',
         '#f44',
-        '#c10',
+        '#c10'
       ]);
     return (
       <div>
@@ -240,7 +240,7 @@ class ChartWrapper extends React.Component {
     super();
     this.state = {
       height: Math.max(250, window.innerHeight - 250),
-      width: Math.max(250, window.innerWidth - 30),
+      width: Math.max(250, window.innerWidth - 30)
     };
   }
 
@@ -256,7 +256,7 @@ class ChartWrapper extends React.Component {
   resizeChart = () => {
     this.setState({
       height: Math.max(250, window.innerHeight - 250),
-      width: Math.max(250, window.innerWidth - 30),
+      width: Math.max(250, window.innerWidth - 30)
     });
   };
 

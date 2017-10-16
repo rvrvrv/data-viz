@@ -3,7 +3,7 @@ const Tooltip = ({ x, y, info }) => {
   const styles = {
     left: x + (place < 15 ? 0 : -170),
     top: y + (place < 15 ? 150 : 0),
-    background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)',
+    background: doping ? 'rgba(255, 200, 200, 0.9)' : 'rgba(175,220,255, 0.9)'
   };
   return (
     <div className="tooltip" style={styles}>
@@ -91,13 +91,13 @@ const Axes = ({ scales, margins, height, width }) => {
     axis: 'x',
     scale: scales.xScale,
     translate: `translate(0, ${height - margins.bottom})`,
-    tickSize: -(height - margins.top - margins.bottom),
+    tickSize: -(height - margins.top - margins.bottom)
   };
   const yProps = {
     axis: 'y',
     scale: scales.yScale,
     translate: `translate(${margins.left}, 0)`,
-    tickSize: -(width - margins.left - margins.right),
+    tickSize: -(width - margins.left - margins.right)
   };
   return (
     <g>
@@ -115,7 +115,7 @@ class Chart extends React.Component {
     this.state = {
       hovering: null,
       x: 0,
-      y: 0,
+      y: 0
     };
   }
 
@@ -131,7 +131,7 @@ class Chart extends React.Component {
     this.setState({
       hovering: e.target.dataset,
       x: Math.min(window.innerWidth - 150, e.target.getAttribute('cx') * 0.9),
-      y: Math.max(50, e.target.getAttribute('cy') * 0.9),
+      y: Math.max(50, e.target.getAttribute('cy') * 0.9)
     });
   };
 
@@ -191,7 +191,7 @@ class ChartWrapper extends React.Component {
     super();
     this.state = {
       height: Math.max(200, window.innerHeight - 120),
-      width: Math.max(200, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20)
     };
   }
 
@@ -207,7 +207,7 @@ class ChartWrapper extends React.Component {
   resizeChart = () => {
     this.setState({
       height: Math.max(200, window.innerHeight - 120),
-      width: Math.max(200, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20)
     });
   };
 

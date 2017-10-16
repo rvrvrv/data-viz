@@ -33,7 +33,7 @@ class Bars extends React.Component {
     this.setState({
       hovering: `${e.target.dataset.date}: $${d3.format(',')(e.target.dataset.gdp)} bn`,
       x: Math.min(window.innerWidth - 250, e.target.getAttribute('x') * 0.75),
-      y: Math.max(40, e.target.getAttribute('y') * 0.9),
+      y: Math.max(40, e.target.getAttribute('y') * 0.9)
     });
   };
 
@@ -99,7 +99,7 @@ class Axis extends React.Component {
           'Jan 1980',
           'Jan 1990',
           'Jan 2000',
-          'Jan 2010',
+          'Jan 2010'
         ])
         .tickFormat(d => d.slice(4));
       d3.select(this.axisElement).call(xAxis);
@@ -132,13 +132,13 @@ const Axes = ({ scales, margins, height, width }) => {
     axis: 'x',
     scale: scales.xScale,
     translate: `translate(0, ${height - margins.bottom})`,
-    tickSize: 5,
+    tickSize: 5
   };
   const yProps = {
     axis: 'y',
     scale: scales.yScale,
     translate: `translate(${margins.left}, 0)`,
-    tickSize: -(width - margins.left - margins.right),
+    tickSize: -(width - margins.left - margins.right)
   };
 
   return (
@@ -188,7 +188,7 @@ class ChartWrapper extends React.Component {
     super();
     this.state = {
       height: Math.max(200, window.innerHeight - 175),
-      width: Math.max(200, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20)
     };
   }
 
@@ -204,7 +204,7 @@ class ChartWrapper extends React.Component {
   resizeChart = () => {
     this.setState({
       height: Math.max(200, window.innerHeight - 175),
-      width: Math.max(200, window.innerWidth - 20),
+      width: Math.max(200, window.innerWidth - 20)
     });
   };
 
@@ -236,7 +236,7 @@ class App extends React.Component {
       // Load GDP data from imported js file
       const data = barChartData.data.map(d => [
         d3.timeFormat('%b %Y')(d3.timeParse('%Y-%m-%d')(d[0])),
-        d[1],
+        d[1]
       ]);
       this.state = { data };
     } catch (e) {
