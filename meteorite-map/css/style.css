@@ -1,0 +1,23 @@
+body {
+  background: #210;
+  color: #fec;
+  text-align: center;
+}
+h1 {
+  font-family: "Skranji", sans-serif;
+  font-size: 3em;
+  margin: 0;
+  white-space: nowrap;
+}
+.world-map {
+  border: 5px outset #320;
+  background-color: #a4bac7;
+}
+.land {
+  fill: #9e6;
+  stroke: #7b5;
+}
+.boundary {
+  fill: none;
+  stroke: rgba(17,34,17,0.2);
+}
