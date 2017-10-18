@@ -7,10 +7,8 @@ function mercatorBounds(projection, maxLat) {
 document.addEventListener('DOMContentLoaded', () => {
   // Initial vars
   const width = window.innerWidth * 0.95;
-  const height = window.innerHeight * 0.85;
+  const height = window.innerHeight * 0.8;
   const maxLat = 83;
-  let lastScaleEvt = null;
-  let lastTransEvt = [0, 0];
 
   // Centered map projection
   const projection = d3
@@ -20,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .translate([width / 2, height / 2]);
 
   // Initial boundaries and scale setup
-  const bounds = mercatorBounds(projection, maxLat);
+  let bounds = mercatorBounds(projection, maxLat);
   const scale = width / (bounds[1][0] - bounds[0][0]);
   const scaleExtent = [scale, 10 * scale];
   projection.scale(scale);
@@ -55,26 +53,29 @@ document.addEventListener('DOMContentLoaded', () => {
     .enter()
     .append('path');
 
-  drawMap();
+  let lastScaleEvt = null;
+  let lastTransEvt = [0, 0];
 
   // Draw map (called upon page load and at zoom/drag)
   function drawMap() {
     // If zooming/dragging map, perform appropriate operation
     if (d3.event) {
-      const scaleEvt = d3.event.transform.k;
+      // Store translation coordinates
       const transEvt = { x: d3.event.transform.x, y: d3.event.transform.y };
+      // Prevent scale from reverting to 1
+      const scaleEvt = (d3.event.transform.k === 1) ? scale : d3.event.transform.k;
       // If scale changes, perform zoom only (ignore translation)
       if (scaleEvt !== lastScaleEvt) projection.scale(scaleEvt);
       else {
         // Calculate translation from drag
         const dx = transEvt.x - lastTransEvt.x;
-        let dy = transEvt.y - lastTransEvt.y;
+        let dy = transEvt.y - lastTransEvt.y; // Reassignable to stay within boundaries
         const yaw = projection.rotate()[0];
         const transProj = projection.translate();
         // Infinite map roll
-        projection.rotate([yaw + ((((360 * dx) / width) * scaleExtent[0]) / scaleEvt), 0, 0]);
+        projection.rotate([yaw + ((((360 * dx) / width) * scaleExtent[0]) / 150), 0, 0]);
         // Keep map within boundaries
-        const bounds = mercatorBounds(projection, maxLat);
+        bounds = mercatorBounds(projection, maxLat);
         if (bounds[0][1] + dy > 0) dy = -bounds[0][1];
         else if (bounds[1][1] + dy < height) dy = height - bounds[1][1];
         // Perform translation
@@ -88,4 +89,5 @@ document.addEventListener('DOMContentLoaded', () => {
     svg.selectAll('path')
       .attr('d', path);
   }
+  drawMap();
 });
