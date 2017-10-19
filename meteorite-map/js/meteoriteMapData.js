@@ -17433,27 +17433,6 @@ var meteorites = [
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [0, 0]
-    },
-    properties: {
-      mass: '256.8',
-      name: 'Northwest Africa 5815',
-      reclong: '0.000000',
-      geolocation_address: null,
-      geolocation_zip: null,
-      year: null,
-      geolocation_state: null,
-      fall: 'Found',
-      id: '50693',
-      recclass: 'L5',
-      reclat: '0.000000',
-      geolocation_city: null,
-      nametype: 'Valid'
-    }
-  }, {
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
       coordinates: [14.015, 66.34833]
     },
     properties: {
