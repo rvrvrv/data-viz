@@ -1,23 +1,38 @@
 body {
   background: #210;
   color: #fec;
+  font-family: Tahoma;
   text-align: center;
 }
 h1 {
-  font-family: "Skranji", sans-serif;
   font-size: 3em;
   margin: 0;
   white-space: nowrap;
+}
+h1, h2 {
+  font-family: "Skranji", sans-serif;
 }
 .world-map {
   border: 5px outset #320;
   background-color: #a4bac7;
 }
 .land {
-  fill: #9e6;
-  stroke: #7b5;
+  fill: #342;
+  stroke: #131;
 }
-.boundary {
+.boundaries {
   fill: none;
-  stroke: rgba(17,34,17,0.2);
+  stroke: rgba(17,51,17, .8);
+}
+.meteorite, .tooltip {
+  stroke: #000;
+  cursor: pointer;
+}
+.tooltip {
+  background: inherit;
+  position: fixed;
+  border: 3px outset #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+  opacity: 0;
 }
