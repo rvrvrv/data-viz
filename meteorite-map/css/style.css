@@ -12,6 +12,10 @@ h1 {
 h1, h2 {
   font-family: "Skranji", sans-serif;
 }
+.map-container {
+  display: flex;
+  justify-content: center;
+}
 .world-map {
   border: 5px outset #320;
   background-color: #a4bac7;
@@ -22,16 +26,20 @@ h1, h2 {
 }
 .boundaries {
   fill: none;
+}
+.boundaries, .meteorite {
   stroke: rgba(17,51,17, .8);
 }
+.meteorite {
+  stroke-width: .3;
+}
 .meteorite, .tooltip {
-  stroke: #000;
   cursor: pointer;
 }
 .tooltip {
   background: inherit;
   position: fixed;
-  border: 3px outset #fff;
+  border: 3px outset rgba(255,255,255,.5);
   border-radius: 5px;
   padding: 0 10px;
   opacity: 0;
