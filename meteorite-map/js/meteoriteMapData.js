@@ -1,4 +1,4 @@
-var meteorites = [
+var meteoriteMapData = [
   {
     type: 'Feature',
     geometry: {
