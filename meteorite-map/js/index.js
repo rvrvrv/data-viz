@@ -1,15 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize map properties and vars
-  let projection, path, svg, g, debounce;
+  let projection, path, svg, g;
   const radiusScale = d3.scalePow().exponent(0.5).domain([0.15, 23e6]).range([1, 80]);
   const opacityScale = d3.scalePow().exponent(0.5).domain([0.15, 23e6]).range([0.8, 0.3]);
   const container = document.getElementsByClassName('map-container')[0];
   let width = container.offsetWidth;
-  let height = width * 0.7;
-  // Zoom/drag functionality
-  const zoom = d3.zoom()
-    .scaleExtent([1, 9])
-    .on('zoom', moveMap);
+  let height = Math.min(width * 0.7, window.innerHeight - 100);
   // Create tooltip div
   const tooltip = d3
     .select('body')
@@ -20,12 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function showTooltip(meteor, x, y) {
     tooltip
       .transition()
-      .duration(250)
+      .duration(200)
       .style('opacity', 0.9);
     tooltip
       .html(`<h2>${meteor.name}</h2><h3>Year: ${meteor.year.slice(0, 4)}</h3><h3>Mass: ${meteor.mass}</h3>`)
-      .style('left', `${x - 50}px`)
-      .style('top', `${y + 75}px`);
+      // Keep tooltip within window
+      .style('left', `${x = x > (window.innerWidth * 0.7) ? x - 150 : x}px`)
+      .style('top', `${y = y > (window.innerHeight * 0.6) ? y - 200 : y + 75}px`);
   }
 
   // Hide tooltip (called during mouseout)
@@ -83,6 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  // Move map within boundaries
+  function moveMap() {
+    // Store translate and scale values from d3 event
+    const trans = [d3.event.transform.x, d3.event.transform.y];
+    const scale = d3.event.transform.k;
+
+    // Keep translation within boundaries
+    trans[0] = Math.min((width / height) * (scale - 1),
+      Math.max(width * (1 - scale), trans[0]));
+    trans[1] = Math.min((height * (scale - 1)) + ((height / 5) * scale),
+      Math.max((height * (1 - scale)) - ((height / 5) * scale), trans[1]));
+    // Perform translation
+    svg.attr('transform', `translate(${trans}) scale(${scale})`);
+  }
+
+  // Zoom/drag functionality
+  const zoom = d3.zoom()
+    .scaleExtent([1, 9])
+    .on('zoom', moveMap);
+
   // Create centered, correctly sized SVG
   function setupMap(width, height) {
     // Centered, flat map projection
@@ -103,37 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
     drawMap();
   }
 
-  // Move map within boundaries
-  function moveMap() {
-    // Store translate and scale values from d3 event
-    const trans = [d3.event.transform.x, d3.event.transform.y];
-    const scale = d3.event.transform.k;
-
-    // Keep translation within boundaries
-    trans[0] = Math.min((width / height) * (scale - 1),
-      Math.max(width * (1 - scale), trans[0]));
-    trans[1] = Math.min((height * (scale - 1)) + ((height / 6) * scale),
-      Math.max((height * (1 - scale)) - ((height / 6) * scale), trans[1]));
-    // Perform translation
-    svg.attr('transform', `translate(${trans}) scale(${scale})`);
-  }
-
   // Redraw map (called upon window resize)
   function redrawMap() {
-    // Reset map container size and recenter
+    // Reset map container size and re-center
     width = container.offsetWidth;
-    height = width / 2;
+    height = Math.min(width * 0.7, window.innerHeight - 100);
     // Erase and recreate map
     d3.select('svg').remove();
     setupMap(width, height);
     drawMap();
   }
 
-  // Debouncer upon on window resize
-  d3.select(window).on('resize', () => {
-    window.clearTimeout(debounce);
-    debounce = window.setTimeout(() => redrawMap, 500);
-  });
+  // Redraw map upon window resize
+  d3.select(window).on('resize', redrawMap);
 
   // Setup map upon page load
   setupMap(width, height);
