@@ -66,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .attr('r', d => Math.floor(radiusScale(d.properties.mass)))
     // Fill color based on year
       .attr('fill', d => `hsla(${d.properties.year.slice(0, 4)}, 80%, 50%, ${opacityScale(d.properties.mass)})`)
+    // Random animation entrance time
+      .style('animation', d => `meteoriteEntrance ${(Math.random() * 2) + 1}s ease-out`)
     // Tooltips
       .on('mouseover', (d) => {
         if (!window.event.buttons) showTooltip(d.properties, d3.event.x, d3.event.y);
